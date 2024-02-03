@@ -6,25 +6,14 @@ import Navbar from "../layout/navbar";
 
 export default function Home() {
   const token = localStorage.getItem("jwtToken");
-  console.log("home directory--->>>", token);
-
   const [customers, setCustomers] = useState([]);
   const [error, setError] = useState(null);
 
-  const [selectedOption, setSelectedOption] = useState("");
-  const [searchKey , setSearchKey  ] = useState("")
-  const [city, setCity] = useState("");
-
-
-  const handleSearchParam = (e) =>{
-    setSearchKey(e.target.value);
-  }
-  
   useEffect(() => {
     loadCustomers();
   }, []);
 
-  const fetchCustomersByCity = async () => {
+  const fetchCustomersByCity = async (searchKey) => {
     try {
       const response = await fetch(
         `http://localhost:8080/api/v1/customerByCity/${searchKey}`,
@@ -36,22 +25,74 @@ export default function Home() {
         }
       );
       const data = await response.json();
-
       setCustomers(data);
-      
-      console.log("customers-------------",customers)
-
+      console.log("customers-------------", customers);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
   };
 
-  useEffect(() => {
-    if (selectedOption !== "Search by") {
-      fetchCustomersByCity();
-    }
-  }, [searchKey]);
+  const fetchCustomersByEmail = async (searchKey) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/customerByEmail/${searchKey}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
 
+      setCustomers(data);
+
+      console.log("customers-------------", customers);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+  const fetchCustomersByPhone = async (searchKey) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/customerByPhone/${searchKey}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      setCustomers(data);
+
+      console.log("customers-------------", customers);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+
+  const fetchCustomersByFirstName = async (searchKey) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/customerByName/${searchKey}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      setCustomers(data);
+
+      console.log("customers-------------", customers);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
 
   const loadCustomers = async () => {
     try {
@@ -86,54 +127,70 @@ export default function Home() {
       }
     }
   };
-  let content ;
-  // if (error) {
-  //   content = <p>{error}</p>;
-  // } else {
-    content = (
-       <><Navbar /><table className="table table-dark table border shadow">
-        <thead>
-          <tr>
-            <th scope="col">Id</th>
-            <th scope="col">First_Name</th>
-            <th scope="col">Last_Name</th>
-            <th scope="col">Address</th>
-            <th scope="col">City</th>
-            <th scope="col">State</th>
-            <th scope="col">Email</th>
-            <th scope="col">Phone</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {customers.map((customer, index) => (
-            <tr key={index}>
-              <th scope="row">{index + 1}</th>
-              <td>{customer.first_name}</td>
-              <td>{customer.last_name}</td>
-              <td>{customer.address}</td>
-              <td>{customer.city} </td>
-              <td>{customer.state}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone}</td>
-              <td>
-                <Link
-                  className="btn btn-danger fa fa-trash"
-                  onClick={() => deleteCustomer(customer.custId)} />
-                <Link
-                  className="btn btn-secondary mx-1 fa fa-pencil"
-                  to={`/editCustomer/${customer.custId}`} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table></>
-    );
-  
+
+  const searchHandler = async (option, searchParam) => {
+    if (searchParam !== "") {
+      if (option === "city") {
+        fetchCustomersByCity(searchParam);
+      } else if (option === "first_name") {
+        fetchCustomersByFirstName(searchParam);
+        console.log("the options and search params are", option, searchParam);
+      } else if (option === "email") {
+        fetchCustomersByEmail(searchParam);
+        console.log("the options and search params are", option, searchParam);
+      } else if (option === "phone") {
+        fetchCustomersByPhone(searchParam);
+        console.log("the options and search params are", option, searchParam);
+      }
+    } else {
+      loadCustomers();
+    }
+  };
 
   return (
     <div className="container">
-      <div className="py-4">{content}</div>
+      <div className="py-4">
+        <Navbar page="home" searchHandler={searchHandler} />
+        <table className="table table-dark table border shadow">
+          <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">First_Name</th>
+              <th scope="col">Last_Name</th>
+              <th scope="col">Address</th>
+              <th scope="col">City</th>
+              <th scope="col">State</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customers.map((customer, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{customer.first_name}</td>
+                <td>{customer.last_name}</td>
+                <td>{customer.address}</td>
+                <td>{customer.city} </td>
+                <td>{customer.state}</td>
+                <td>{customer.email}</td>
+                <td>{customer.phone}</td>
+                <td>
+                  <Link
+                    className="btn btn-danger fa fa-trash"
+                    onClick={() => deleteCustomer(customer.custId)}
+                  />
+                  <Link
+                    className="btn btn-secondary mx-1 fa fa-pencil"
+                    to={`/editCustomer/${customer.custId}`}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-  }
+}
