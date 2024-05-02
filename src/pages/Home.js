@@ -44,10 +44,7 @@ export default function Home() {
         }
       );
       const data = await response.json();
-
       setCustomers(data);
-
-      console.log("customers-------------", customers);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
@@ -64,10 +61,7 @@ export default function Home() {
         }
       );
       const data = await response.json();
-
       setCustomers(data);
-
-      console.log("customers-------------", customers);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
@@ -85,10 +79,7 @@ export default function Home() {
         }
       );
       const data = await response.json();
-
       setCustomers(data);
-
-      console.log("customers-------------", customers);
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
@@ -104,7 +95,6 @@ export default function Home() {
           },
         }
       );
-      console.log("--------------data---------------------", response.data);
       setCustomers(response.data);
     } catch (err) {
       setError(err.message);

@@ -14,7 +14,6 @@ function App() {
   return (
     <div className="App">
       <Router>
-        
        <Routes>
           <Route exact path='/' element={<AuthLogin/>}></Route>
           <Route exact path="/home" element={<Home/>} />

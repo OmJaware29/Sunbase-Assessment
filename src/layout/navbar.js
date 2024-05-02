@@ -70,6 +70,7 @@ export default function Navbar({ page, searchHandler }) {
           </div>
         </div>
       </nav>
+      
     </div>
   );
 }
